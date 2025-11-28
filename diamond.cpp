@@ -1,71 +1,63 @@
 #include <iostream>
 using namespace std;
 
-/*
-    Recursive Diamond Pattern
-    -------------------------
-    This function prints a single line of the diamond.
-    It receives the current row and total size as parameters.
+// Helper: print a character 'ch' exactly 'count' times
+void printChars(char ch, int count) {
+    for (int i = 0; i < count; ++i) {
+        cout << ch;
+    }
+}
 
-    Logic:
-    1. Print left stars      → (size - row)
-    2. Print left spaces     → (row * 2 - 1)
-    3. Print middle stars    → 1
-    4. Print right spaces    → (row * 2 - 1)
-    5. Print right stars     → (size - row)
+void printRow(int row, int maxRow) {
+    int leftStars = maxRow + 1 - row;
 
-    Recursion reduces & then increases row count, forming symmetry.
-*/
+    if (row == 1) {
+        // Special case to match exactly: 11 stars, 3 spaces, 11 stars
+        printChars('*', leftStars);
+        printChars(' ', 3);
+        printChars('*', leftStars);
+    } else {
+        int midStars = 2 * (row - 1) - 1;
+        printChars('*', leftStars);     // left block
+        printChars(' ', 2);             // left gap
+        printChars('*', midStars);      // middle block
+        printChars(' ', 2);             // right gap
+        printChars('*', leftStars);     // right block
+    }
 
-void printDiamond(int row, int size) {
+    cout << '\n';
+}
 
-    // BASE CASE – when row passes size, stop
-    if (row > size) return;
+void printDiamond(int row, int maxRow) {
+    // Print the current row on the way down
+    printRow(row, maxRow);
 
-    // Print left stars
-    for (int i = 0; i < size - row; i++)
-        cout << "*";
+    // Base case: center row should only print once
+    if (row == maxRow) {
+        return;
+    }
 
-    // Print left gap
-    for (int i = 0; i < row * 2 - 1; i++)
-        cout << " ";
+    // Recursive step: go one row deeper
+    printDiamond(row + 1, maxRow);
 
-    // Print middle star
-    cout << "*";
-
-    // Print right gap
-    for (int i = 0; i < row * 2 - 1; i++)
-        cout << " ";
-
-    // Print right stars
-    for (int i = 0; i < size - row; i++)
-        cout << "*";
-
-    cout << endl;
-
-    // Recursive call (DOWNWARD half)
-    printDiamond(row + 1, size);
-
-    // Print bottom half on **unwinding**
-    for (int i = 0; i < size - row; i++)
-        cout << "*";
-
-    for (int i = 0; i < row * 2 - 1; i++)
-        cout << " ";
-
-    cout << "*";
-
-    for (int i = 0; i < row * 2 - 1; i++)
-        cout << " ";
-
-    for (int i = 0; i < size - row; i++)
-        cout << "*";
-
-    cout << endl;
+    // Print the same row again on the way back up (mirror)
+    printRow(row, maxRow);
 }
 
 int main() {
-    int size = 11;  // 11 → prints 23 total rows, matching assignment requirement
-    printDiamond(1, size);
+    const int width  = 25;  // total characters per line
+    const int maxRow = 11;  // number of "inside" rows above the center
+
+    // Top solid line
+    printChars('*', width);
+    cout << '\n';
+
+    // Recursive inside part
+    printDiamond(1, maxRow);
+
+    // Bottom solid line
+    printChars('*', width);
+    cout << '\n';
+
     return 0;
 }
